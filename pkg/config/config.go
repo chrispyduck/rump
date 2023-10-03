@@ -78,7 +78,7 @@ func Parse() Config {
 	to := flag.String("to", "", example)
 	silent := flag.Bool("silent", false, "optional, no verbose output")
 	ttl := flag.Bool("ttl", false, "optional, enable ttl sync")
-	maxBuf := flag.Int("buffer", 64*1024, "the size of the buffer used when reading the file, uint:byte")
+	maxBuf := flag.Int("buffer", 20*1024*1024, "the size of the buffer used when reading the file, uint:byte")
 	flag.Parse()
 
 	cfg, err := validate(*from, *to, *silent, *ttl, *maxBuf)

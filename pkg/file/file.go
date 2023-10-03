@@ -73,10 +73,6 @@ func (f *File) Read(ctx context.Context) error {
 	scanner.Buffer(buf, f.MaxBuf)
 	scanner.Split(splitCross)
 
-	// set buffer max size: 20MB to 40MB
-	buf := make([]byte, 0, 20*1024*1024)
-	scanner.Buffer(buf, 40*1024*1024)
-
 	// Scan line by line
 	// file protocol is key✝✝value✝✝ttl✝✝
 	for scanner.Scan() {
