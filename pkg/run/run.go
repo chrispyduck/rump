@@ -40,7 +40,7 @@ func Run(cfg config.Config) {
 	if cfg.Source.IsRedis {
 		db, err := radix.NewPool("tcp", cfg.Source.URI, 1)
 		if err != nil {
-			exit(err)
+			exit(fmt.Errorf("error creating new redis pool for %s: %W", cfg.Source.URI, err))
 		}
 
 		source := redis.New(db, ch, cfg.Silent, cfg.TTL)
@@ -49,7 +49,7 @@ func Run(cfg config.Config) {
 			return source.Read(gctx)
 		})
 	} else {
-		source := file.New(cfg.Source.URI, ch, cfg.Silent, cfg.TTL)
+		source := file.New(cfg.Source.URI, ch, cfg.Silent, cfg.TTL, cfg.MaxBuf)
 
 		g.Go(func() error {
 			return source.Read(gctx)
@@ -60,7 +60,7 @@ func Run(cfg config.Config) {
 	if cfg.Target.IsRedis {
 		db, err := radix.NewPool("tcp", cfg.Target.URI, 1)
 		if err != nil {
-			exit(err)
+			exit(fmt.Errorf("error creating new redis pool for %s: %W", cfg.Target.URI, err))
 		}
 
 		target := redis.New(db, ch, cfg.Silent, cfg.TTL)
@@ -70,7 +70,7 @@ func Run(cfg config.Config) {
 			return target.Write(gctx)
 		})
 	} else {
-		target := file.New(cfg.Target.URI, ch, cfg.Silent, cfg.TTL)
+		target := file.New(cfg.Target.URI, ch, cfg.Silent, cfg.TTL, cfg.MaxBuf)
 
 		g.Go(func() error {
 			defer cancel()
